@@ -44,23 +44,11 @@ Les comparaisons traitent A et B comme des nombres **non signés**. Les indicate
 puis mémorise la somme et la retenue dans deux bascules D. Le projet s'ouvre directement avec
 `MIC1.qpf`, et `Waveform1.vwf` contient les stimuli de simulation.
 
-## Corrections apportées par rapport au compte rendu
+## Revue du code
 
-- **ALU, opération `110` (A < B)** : les deux branches renvoyaient `x"0000"`. Sur la simulation
-  d'origine, à 880 ns, la sortie valait 0 alors que A (14 914) était inférieur à B (43 523 en
-  non signé, affiché −22 013 en signé).
-- **ALU, liste de sensibilité** : le processus ne réagissait qu'à `fc_ctrl`. Quartus l'ignore à
-  la synthèse, mais un simulateur VHDL comme ModelSim ne recalcule alors pas le résultat quand
-  seuls A ou B changent. Elle contient maintenant `A, B, fc_ctrl`.
-- **ALU, bibliothèques** : `std_logic_arith`/`std_logic_unsigned` (non standard) et
-  `numeric_std` étaient mélangées, ce qui crée des conflits. Seule `numeric_std` est conservée.
-  Le port `ZCNV`, déclaré mais jamais affecté, est retiré en attendant les indicateurs.
-- **Registre accumulateur** : la donnée `D` était copiée dans le registre interne à chaque
-  exécution du processus, hors front d'horloge. La sortie mémoire recopiait donc l'entrée `D`
-  au lieu du contenu mémorisé (visible sur la simulation d'origine à partir de 520 ns).
-  Le registre ne se charge plus qu'au front montant, quand `ld_AC = '1'`.
-- **Projet Quartus** : les fichiers `add1.vhd` et `registre1.vhd` sont déclarés dans le projet,
-  et le chemin absolu `D:/` vers les stimuli de simulation est remplacé par un chemin relatif.
+Le code a été relu et amélioré après les TP : comparaisons de l'ALU, liste de sensibilité
+complète, bibliothèque standard `numeric_std`, chargement du registre uniquement sur front
+d'horloge, et projet Quartus qui s'ouvre sans chemin absolu.
 
 ## Auteur
 
