@@ -10,6 +10,7 @@ validées en simulation.
 |---|---|
 | `processeur/alu.vhd` | Unité arithmétique et logique 16 bits à 8 opérations |
 | `processeur/registre_ac.vhd` | Registre accumulateur 16 bits avec remise à zéro et sortie trois états |
+| `processeur/tb_registre_ac.vhd` | Banc de test du registre accumulateur, avec vérifications automatiques |
 | `initiation-quartus/` | Premier projet Quartus : multiplexeur, demi-additionneur et bascules D |
 
 ## Unité arithmétique et logique (ALU)
@@ -37,6 +38,23 @@ Les comparaisons traitent A et B comme des nombres **non signés**. Les indicate
 - `Q` donne en permanence le contenu du registre.
 - `Q_mem` présente ce contenu sur le bus mémoire quand `store = '1'`, et passe en haute
   impédance (`Z`) sinon, pour ne pas perturber les autres composants reliés au bus.
+
+### Simulation
+
+Le banc de test `tb_registre_ac.vhd` applique une séquence de stimuli et vérifie
+automatiquement les résultats avec des assertions. Simulation réalisée avec GHDL :
+
+![Chronogramme de simulation du registre accumulateur](images/simulation_registre_ac.png)
+
+- **Vers 30 ns** : au front d'horloge, avec `ld_AC = '1'`, le registre charge `1234`.
+- **De 45 à 125 ns** : `D` passe à `ABCD` sans chargement, et `Q` conserve `1234`.
+- **De 85 à 125 ns** : avec `store = '1'`, `Q_mem` présente `1234` sur le bus, puis repasse à `ZZZZ`.
+- **Vers 130 ns** : nouveau chargement, `Q` passe à `00FF`.
+- **À 165 ns** : `RAZ` passe à 0 et `Q` revient à `0000` immédiatement, sans attendre l'horloge.
+
+Pour la reproduire en ligne, sur EDA Playground : choisir VHDL et GHDL, coller `registre_ac.vhd`
+côté *design* et le banc de test côté *testbench*, indiquer `tb_registre_AC` comme entité de plus
+haut niveau, puis lancer la simulation.
 
 ## Projet d'initiation
 
